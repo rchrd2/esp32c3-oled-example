@@ -1,6 +1,7 @@
 #include "helpers.h"
 #include "esp_log.h"
 #include "esp_pm.h"
+#include "esp_sleep.h"
 #include "sdkconfig.h"
 
 static const char *TAG = "helpers";
@@ -27,5 +28,22 @@ esp_err_t set_cpu_frequency(int freq_mhz)
     ESP_LOGI(TAG, "Current CPU frequency: %d MHz (set via CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ)", CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ);
     return ESP_ERR_NOT_SUPPORTED;
     #endif
+}
+
+void light_sleep_delay_ms(uint32_t ms)
+{
+    if (ms == 0) {
+        return;
+    }
+
+    // Enable timer wakeup source
+    esp_sleep_enable_timer_wakeup(ms * 1000ULL); // Convert ms to microseconds
+
+    // Enter light sleep - will wake automatically when timer expires
+    // RAM and RTC memory are preserved, CPU and most peripherals are powered down
+    esp_light_sleep_start();
+
+    // After wakeup, disable wakeup sources for next sleep
+    esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
 }
 

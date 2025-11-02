@@ -24,7 +24,7 @@ u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
 #define OLED_CONTRAST_MAX 255 /* Brightest brightness (for counter = 10) */
 
 /* Target frames per second */
-#define TARGET_FPS 30
+#define TARGET_FPS 5
 
 /* Calculate frame delay in milliseconds from FPS */
 #define FRAME_DELAY_MS (1000 / TARGET_FPS)
@@ -92,7 +92,7 @@ void app_main(void)
         int16_t dot_y = 0;  /* Stay at top edge */
 
         /* Draw a 2x2 pixel dot for visibility */
-        u8g2_DrawBox(&u8g2, dot_x, dot_y, 2 + counter, 2 + counter);
+        u8g2_DrawBox(&u8g2, dot_x, dot_y, 2, 2);
 
         u8g2_SendBuffer(&u8g2);
 
@@ -101,7 +101,9 @@ void app_main(void)
             counter = 1;
         }
 
-        vTaskDelay(pdMS_TO_TICKS(FRAME_DELAY_MS));
+        // Use light sleep instead of vTaskDelay for power saving
+        // This reduces power consumption from ~40mA to ~0.8mA during sleep
+        light_sleep_delay_ms(FRAME_DELAY_MS);
     }
 }
 // usb upload sometimes fails, not sure why, i did not do anything other than press upload again.
