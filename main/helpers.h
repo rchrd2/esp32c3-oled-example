@@ -3,6 +3,7 @@
 
 #include "esp_err.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * @brief Configure CPU frequency using ESP-IDF power management API
@@ -35,6 +36,7 @@ esp_err_t set_cpu_frequency(int freq_mhz);
  * consumption is a concern (battery-powered devices, etc.)
  */
 void light_sleep_delay_ms(uint32_t ms);
+
 
 #endif // HELPERS_H
 
